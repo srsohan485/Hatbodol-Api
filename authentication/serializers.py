@@ -67,6 +67,11 @@ class SocialLoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    has_profile = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ["id", "username", "email", "is_email_verified"]
+        fields = ["id", "username", "email", "is_email_verified", "has_profile"]
+
+    def get_has_profile(self, obj):
+        return hasattr(obj, "profile")
