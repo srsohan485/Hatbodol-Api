@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "authentication",
     "profiles",
     "rest_framework_simplejwt.token_blacklist",
+    "products",
+    "chat",
 ]
 
 MEDIA_URL = "/media/"
