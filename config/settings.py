@@ -47,10 +47,15 @@ INSTALLED_APPS = [
     "corsheaders",
     "authentication",
     "profiles",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+# Settings screen এর info
+PRIVACY_POLICY_URL = os.getenv("PRIVACY_POLICY_URL", "https://hatbodol.com/privacy")
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "support@hatbodol.com")
+SUPPORT_PHONE = os.getenv("SUPPORT_PHONE", "")
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
