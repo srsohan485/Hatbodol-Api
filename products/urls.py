@@ -8,6 +8,7 @@ urlpatterns = [
     path("categories/", v.CategoryListView.as_view()),
     path("areas/", v.AreaListView.as_view()),
     path("safety-tips/", v.SafetyTipsView.as_view()),
+    path("filter-options/", v.FilterOptionsView.as_view()),
     path("report-reasons/", v.ReportReasonsView.as_view()),
     path("sellers/<int:user_id>/", v.SellerProfileView.as_view()),
     path("block/<int:user_id>/", v.BlockUserView.as_view()),

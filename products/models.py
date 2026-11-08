@@ -33,10 +33,8 @@ class Area(models.Model):
 
 class Product(models.Model):
     CONDITION_CHOICES = (
-        ("new", "একদম নতুন"),
-        ("like_new", "প্রায় নতুন"),
-        ("good", "ভালো"),
-        ("fair", "মোটামুটি"),
+        ("new", "নতুন"),
+        ("used", "ব্যবহৃত"),
     )
     STATUS_CHOICES = (("active", "Active"), ("sold", "Sold"), ("hidden", "Hidden"))
 
@@ -47,7 +45,7 @@ class Product(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True)
     price = models.PositiveIntegerField()  # টাকা
-    condition = models.CharField(max_length=10, choices=CONDITION_CHOICES, default="good")
+    condition = models.CharField(max_length=10, choices=CONDITION_CHOICES, default="used")
     area = models.CharField(max_length=150, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)

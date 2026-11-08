@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import F, Max, Min, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
@@ -105,6 +105,9 @@ class ProductListCreateView(APIView):
         if (v := p.get("max_price")) and v.isdigit():
             qs = qs.filter(price__lte=int(v))
 
+        cond = p.get("condition")
+        if cond in ("new", "used"):
+            qs = qs.filter(condition=cond) 
         lat, lng = get_center(request)
         radius = to_float(p.get("radius"))
         radius = 10 if radius is None else min(max(radius, 0), 200)  # 0 = সীমা নেই
@@ -396,4 +399,23 @@ class SafetyTipsView(APIView):
                 "সামনাসামনি দেখে কিনুন",
                 "পণ্য যাচাই করে টাকা দিন",
             ],
+        })
+
+
+
+class FilterOptionsView(APIView):
+    """ফিল্টার bottom sheet এর সব অপশন একসাথে"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        agg = Product.objects.filter(status="active").aggregate(hi=Max("price"))
+        return Response({
+            "categories": CategorySerializer(Category.objects.filter(is_active=True), many=True).data,
+            "radius_options": [5, 10, 20],
+            "default_radius": 10,
+            "conditions": [
+                {"value": "new", "label": "নতুন"},
+                {"value": "used", "label": "ব্যবহৃত"},
+            ],
+            "price": {"min": 0, "max": max(agg["hi"] or 0, 15000)},
         })

@@ -49,6 +49,20 @@ class ProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("ছবি ৫MB এর বেশি হতে পারবে না।")
         return value
 
+    
+    def to_internal_value(self, data):
+        if hasattr(data, "copy"):
+            data = data.copy()
+        if "photo" in data and data.get("photo") in ("", "null", None):
+            data.pop("photo")
+        for k in ("latitude", "longitude"):
+            try:
+                if data.get(k) not in (None, ""):
+                    data[k] = round(float(data[k]), 6)
+            except (TypeError, ValueError):
+                pass
+        return super().to_internal_value(data)    
+
 
 class PublicProfileSerializer(serializers.ModelSerializer):
     """অন্যের প্রোফাইল দেখার জন্য: ফোন/email লুকানো"""
