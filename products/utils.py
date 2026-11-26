@@ -1,5 +1,5 @@
 from math import asin, cos, radians, sin, sqrt
-
+from PIL import Image
 from .models import BlockedUser
 
 
@@ -34,3 +34,18 @@ def user_brief(user, request=None):
         "area": p.area if p else "",
         "phone_verified": p.is_phone_verified if p else False,
     }
+
+
+def is_image(f):
+    """ফাইলের ভেতর দেখে ছবি কি না যাচাই (header এর উপর ভরসা না করে)"""
+    try:
+        f.seek(0)
+        Image.open(f).verify()
+        return True
+    except Exception:
+        return False
+    finally:
+        try:
+            f.seek(0)
+        except Exception:
+            pass

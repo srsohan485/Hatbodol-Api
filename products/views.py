@@ -13,7 +13,7 @@ from .serializers import (
     AreaSerializer, CategorySerializer, ProductDetailSerializer,
     ProductListSerializer, ProductWriteSerializer,
 )
-from .utils import blocked_ids, bounding_box, haversine_km, user_brief
+from .utils import blocked_ids, bounding_box, haversine_km, is_image, user_brief
 
 User = get_user_model()
 
@@ -63,12 +63,12 @@ def check_media(images, video, existing=0):
     if existing + len(images) > MAX_IMAGES:
         return {"images": [f"সর্বোচ্চ {MAX_IMAGES}টি ছবি দেওয়া যাবে।"]}
     for img in images:
-        if not (img.content_type or "").startswith("image/"):
+        if not is_image(img):
             return {"images": ["শুধু ছবির ফাইল দিন।"]}
         if img.size > MAX_IMAGE_MB * 1024 * 1024:
             return {"images": [f"প্রতিটি ছবি {MAX_IMAGE_MB}MB এর কম হতে হবে।"]}
     if video:
-        if video.content_type not in ("video/mp4", "video/quicktime", "video/webm"):
+        if not video.name.lower().endswith((".mp4", ".mov", ".webm")):
             return {"video": ["mp4, mov বা webm ভিডিও দিন।"]}
         if video.size > MAX_VIDEO_MB * 1024 * 1024:
             return {"video": [f"ভিডিও {MAX_VIDEO_MB}MB এর কম হতে হবে।"]}

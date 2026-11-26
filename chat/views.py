@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from products.models import Product
-from products.utils import blocked_ids, user_brief
+from products.utils import blocked_ids, is_image, user_brief
 
 from .models import Conversation, Message
 
@@ -146,7 +146,7 @@ class MessagesView(APIView):
         if len(text) > 2000:
             return Response({"text": ["মেসেজ ২০০০ অক্ষরের বেশি হতে পারবে না।"]}, status=400)
         if image:
-            if not (image.content_type or "").startswith("image/"):
+            if not is_image(image):
                 return Response({"image": ["শুধু ছবির ফাইল দিন।"]}, status=400)
             if image.size > 5 * 1024 * 1024:
                 return Response({"image": ["ছবি ৫MB এর কম হতে হবে।"]}, status=400)

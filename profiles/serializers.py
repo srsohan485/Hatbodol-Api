@@ -51,17 +51,17 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     
     def to_internal_value(self, data):
-        if hasattr(data, "copy"):
-            data = data.copy()
-        if "photo" in data and data.get("photo") in ("", "null", None):
-            data.pop("photo")
+        clean = {k: data.get(k) for k in self.fields if k in data}
+        # খালি photo এলে বাদ দাও
+        if clean.get("photo") in ("", "null", None):
+            clean.pop("photo", None)
         for k in ("latitude", "longitude"):
             try:
-                if data.get(k) not in (None, ""):
-                    data[k] = round(float(data[k]), 6)
+                if clean.get(k) not in (None, ""):
+                    clean[k] = round(float(clean[k]), 6)
             except (TypeError, ValueError):
                 pass
-        return super().to_internal_value(data)    
+        return super().to_internal_value(clean) 
 
 
 class PublicProfileSerializer(serializers.ModelSerializer):

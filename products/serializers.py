@@ -94,16 +94,16 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         extra_kwargs = {"category": {"required": True, "allow_null": False}}
 
     def to_internal_value(self, data):
+        # শুধু নিজের field গুলো নেওয়া হচ্ছে, আপলোড করা ফাইল কপি করা হয় না
+        clean = {k: data.get(k) for k in self.fields if k in data}
         # GPS এর লম্বা দশমিক ছেঁটে ৬ ঘরে আনা
-        if hasattr(data, "copy"):
-            data = data.copy()
         for k in ("latitude", "longitude"):
             try:
-                if data.get(k) not in (None, ""):
-                    data[k] = round(float(data[k]), 6)
+                if clean.get(k) not in (None, ""):
+                    clean[k] = round(float(clean[k]), 6)
             except (TypeError, ValueError):
                 pass
-        return super().to_internal_value(data)
+        return super().to_internal_value(clean)
 
     def validate_title(self, v):
         v = v.strip()
